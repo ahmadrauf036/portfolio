@@ -391,11 +391,11 @@ function CredentialField({ label, value }) {
     return (
         <button
             onClick={handleCopy}
-            className="flex items-center justify-between w-full text-left rounded px-1.5 py-1"
+            className="flex items-center justify-between w-fit text-left rounded px-1.5 py-1"
             style={{ fontFamily: MONO, fontSize: "0.76rem" }}
             title="Click to copy"
         >
-            <span>
+            <span className="flex space-x-1.5 w-fit">
                 <span style={{ color: C.muted }}>{label}: </span>
                 <span style={{ color: C.text }}>{value}</span>
             </span>
@@ -425,7 +425,7 @@ function CredentialField({ label, value }) {
 function CredentialCard({ role, email, password }) {
     return (
         <div
-            className="rounded px-3 py-2"
+            className="rounded px-3 py-2 w-fit"
             style={{
                 backgroundColor: C.panel,
                 border: `1px solid ${C.border}`,
@@ -467,7 +467,7 @@ function DemoCredentials({ roles }) {
                     Demo Credentials
                 </span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-fit">
                 {roles.map((r) => (
                     <CredentialCard key={r.role} {...r} />
                 ))}

@@ -15,6 +15,8 @@ import {
     Check,
     ExternalLink,
     Files,
+    KeyRound,
+    Copy,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -371,99 +373,188 @@ function Bullet({ children }) {
         </li>
     );
 }
+function CredentialField({ label, value }) {
+    const [copied, setCopied] = useState(false);
 
-function LedgerIQContent() {
+    function handleCopy() {
+        if (typeof navigator !== "undefined" && navigator.clipboard) {
+            navigator.clipboard
+                .writeText(value)
+                .then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1200);
+                })
+                .catch(() => {});
+        }
+    }
+
+    return (
+        <button
+            onClick={handleCopy}
+            className="flex items-center justify-between w-full text-left rounded px-1.5 py-1"
+            style={{ fontFamily: MONO, fontSize: "0.76rem" }}
+            title="Click to copy"
+        >
+            <span>
+                <span style={{ color: C.muted }}>{label}: </span>
+                <span style={{ color: C.text }}>{value}</span>
+            </span>
+            {copied ? (
+                <Check
+                    size={12}
+                    style={{
+                        color: C.green,
+                        flexShrink: 0,
+                        marginLeft: "0.4rem",
+                    }}
+                />
+            ) : (
+                <Copy
+                    size={12}
+                    style={{
+                        color: C.muted,
+                        flexShrink: 0,
+                        marginLeft: "0.4rem",
+                    }}
+                />
+            )}
+        </button>
+    );
+}
+
+function CredentialCard({ role, email, password }) {
     return (
         <div
-            className="px-6 md:px-10 py-8 max-w-2xl"
-            style={{ fontFamily: SANS }}
+            className="rounded px-3 py-2"
+            style={{
+                backgroundColor: C.panel,
+                border: `1px solid ${C.border}`,
+            }}
         >
-            <ProjectHeader
-                title="LedgerIQ"
-                subtitle="Multi-tenant bookkeeping platform · Personal / freelance"
-            />
-            <div className="mb-5">
-                {[
-                    "React",
-                    "TypeScript",
-                    "Tailwind CSS",
-                    "Node.js",
-                    "Express",
-                    "PostgreSQL (Supabase)",
-                    "Supabase Auth & Storage",
-                    "Resend",
-                    "Vercel",
-                    "Render",
-                ].map((t) => (
-                    <Tag key={t}>{t}</Tag>
+            <div className="flex items-center gap-1.5 mb-1">
+                <KeyRound size={12} style={{ color: C.amber }} />
+                <span
+                    style={{
+                        color: C.amber,
+                        fontFamily: MONO,
+                        fontSize: "0.72rem",
+                        fontWeight: 600,
+                    }}
+                >
+                    {role}
+                </span>
+            </div>
+            <CredentialField label="email" value={email} />
+            <CredentialField label="pass" value={password} />
+        </div>
+    );
+}
+
+function DemoCredentials({ roles }) {
+    return (
+        <div className="mb-5">
+            <div className="flex items-center gap-1.5 mb-2">
+                <KeyRound size={13} style={{ color: C.muted }} />
+                <span
+                    style={{
+                        color: C.muted,
+                        fontFamily: MONO,
+                        fontSize: "0.72rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                    }}
+                >
+                    Demo Credentials
+                </span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {roles.map((r) => (
+                    <CredentialCard key={r.role} {...r} />
                 ))}
             </div>
-            <ul>
-                <Bullet>
-                    Three-tier role-based access (Admin, Client Owner,
-                    Bookkeeper) with data isolation enforced at the database
-                    level via PostgreSQL Row-Level Security.
-                </Bullet>
-                <Bullet>
-                    A full double-entry accounting engine: multi-line journal
-                    entries, approval workflows, and real-time debit/credit
-                    validation.
-                </Bullet>
-                <Bullet>
-                    Live-computed financial reports — Trial Balance, Profit
-                    &amp; Loss, Balance Sheet — with automated balance
-                    verification baked in.
-                </Bullet>
-                <Bullet>
-                    A secure document-sharing module on Supabase Storage, with
-                    inline PDF previews and time-limited signed URLs.
-                </Bullet>
-                <Bullet>
-                    Owned the project end to end — requirements, schema design,
-                    REST API, and production hosting.
-                </Bullet>
-            </ul>
         </div>
     );
 }
-
+function LedgerIQContent() {
+  return (
+    <div className="px-6 md:px-10 py-8 max-w-2xl" style={{ fontFamily: SANS }}>
+      <ProjectHeader
+        title="LedgerIQ"
+        subtitle="Multi-tenant bookkeeping platform · Personal / freelance"
+        link="https://ledger-iq-lemon.vercel.app/"
+      />
+      <div className="mb-5">
+        {["React", "TypeScript", "Tailwind CSS", "Node.js", "Express", "PostgreSQL (Supabase)", "Supabase Auth & Storage", "Resend", "Vercel", "Render"].map(
+          (t) => (
+            <Tag key={t}>{t}</Tag>
+          )
+        )}
+      </div>
+      <DemoCredentials
+        roles={[
+          { role: "Super Admin", email: "developer@gmail.com", password: "Nothing31@" },
+          { role: "Company Owner", email: "tradingco@gmail.com", password: "Nothing31@" },
+          { role: "Employee / Bookkeeper", email: "bktradingco@gmail.com", password: "Nothing31@" },
+        ]}
+      />
+      <ul>
+        <Bullet>
+          Three-tier role-based access (Admin, Client Owner, Bookkeeper) with data isolation enforced
+          at the database level via PostgreSQL Row-Level Security.
+        </Bullet>
+        <Bullet>
+          A full double-entry accounting engine: multi-line journal entries, approval workflows, and
+          real-time debit/credit validation.
+        </Bullet>
+        <Bullet>
+          Live-computed financial reports — Trial Balance, Profit &amp; Loss, Balance Sheet — with
+          automated balance verification baked in.
+        </Bullet>
+        <Bullet>
+          A secure document-sharing module on Supabase Storage, with inline PDF previews and
+          time-limited signed URLs.
+        </Bullet>
+        <Bullet>
+          Owned the project end to end — requirements, schema design, REST API, and production hosting.
+        </Bullet>
+      </ul>
+    </div>
+  );
+}
+ 
 function TransnovaContent() {
-    return (
-        <div
-            className="px-6 md:px-10 py-8 max-w-2xl"
-            style={{ fontFamily: SANS }}
-        >
-            <ProjectHeader
-                title="Transnova"
-                subtitle="Logistics & fleet management platform · Final year project"
-            />
-            <div className="mb-5">
-                {["TypeScript", "MongoDB", "React", "Node.js", "Express"].map(
-                    (t) => (
-                        <Tag key={t}>{t}</Tag>
-                    ),
-                )}
-            </div>
-            <ul>
-                <Bullet>
-                    Architected backend APIs in Node.js and Express to handle
-                    logistics, authentication, and fleet management workflows.
-                </Bullet>
-                <Bullet>
-                    Built the central admin dashboard in React and TypeScript
-                    for fleet data management, with an interface designed for
-                    non-technical staff.
-                </Bullet>
-                <Bullet>
-                    Coordinated cross-platform system design so data stayed in
-                    sync between the web dashboard and a companion React Native
-                    mobile app.
-                </Bullet>
-            </ul>
-        </div>
-    );
+  return (
+    <div className="px-6 md:px-10 py-8 max-w-2xl" style={{ fontFamily: SANS }}>
+      <ProjectHeader
+        title="Transnova"
+        subtitle="Logistics & fleet management platform · Final year project"
+        link="https://transnova-qyc2.vercel.app/"
+        secondaryLink="https://transnova-qyc2.vercel.app/admin"
+        secondaryLabel="admin panel"
+      />
+      <div className="mb-5">
+        {["TypeScript", "MongoDB", "React", "Node.js", "Express"].map((t) => (
+          <Tag key={t}>{t}</Tag>
+        ))}
+      </div>
+      <DemoCredentials roles={[{ role: "Admin", email: "admin@gmail.com", password: "Nothing31@" }]} />
+      <ul>
+        <Bullet>
+          Architected backend APIs in Node.js and Express to handle logistics, authentication, and
+          fleet management workflows.
+        </Bullet>
+        <Bullet>
+          Built the central admin dashboard in React and TypeScript for fleet data management, with
+          an interface designed for non-technical staff.
+        </Bullet>
+        <Bullet>
+          Coordinated cross-platform system design so data stayed in sync between the web dashboard
+          and a companion React Native mobile app.
+        </Bullet>
+      </ul>
+    </div>
+  );
 }
-
 function Menu360Content() {
     return (
         <div
